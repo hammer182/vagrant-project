@@ -4,6 +4,11 @@ apt-get install -y mysql-server-5.7 && \
 mysql -e "create user 'phpuser'@'%' identified by 'pass';"
 SCRIPT
 
+$script_puppet = <<-SCRIPT
+apt-get update && \
+apt install puppet -y
+SCRIPT
+
 Vagrant.configure("2") do |config|
   config.vm.box = "ubuntu/bionic64"
   #Synced Folders
@@ -26,9 +31,18 @@ Vagrant.configure("2") do |config|
 
   #PHP
   config.vm.define "phpweb" do |php|
+      #Synced Folder for PHP
+      php.vm.synced_folder "./src", "/src"
       #Port Forwarding
-      php.vm.network "forwarded_port", guest: 80, host: 8089
+      php.vm.network "forwarded_port", guest: 8888, host: 8888
       #Public Network manually assigned
       php.vm.network "public_network", ip: "192.168.1.66"
+      #Update packages and install puppet
+      php.vm.provision "shell", inline: $script_puppet
+
+      php.vm.provision "puppet" do |puppet|
+        puppet.manifests_path = "./configs/manifests"
+        puppet.manifest_file = "phpweb.pp"
+      end
   end
 end
