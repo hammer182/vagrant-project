@@ -23,6 +23,12 @@ Vagrant.configure("2") do |config|
 
   #MySQL
   config.vm.define "mysqldb" do |mysql|
+      #Configuration
+      mysql.vm.provider "virtualbox" do |vb|
+        vb.memory = 1024
+        vb.cpus = 2
+        vb.name = "mysqldb"
+      end
       #Public Network manually assigned
       mysql.vm.network "public_network", ip: "192.168.1.182"    
       #Provisioning
@@ -32,6 +38,12 @@ Vagrant.configure("2") do |config|
 
   #PHP
   config.vm.define "phpweb" do |php|
+      #Configuration
+      php.vm.provider "virtualbox" do |vb|
+        vb.memory = 1024
+        vb.cpus = 1
+        vb.name = "phpweb"
+      end
       #Synced Folder for PHP
       php.vm.synced_folder "./src", "/src"
       #Port Forwarding
@@ -48,6 +60,12 @@ Vagrant.configure("2") do |config|
   end
 
   config.vm.define "ansible" do |ansible|
+      #Configuration
+      ansible.vm.provider "virtualbox" do |vb|
+        vb.memory = 512
+        vb.cpus = 2
+        vb.name = "ansible"
+      end
       #Public Network manually assigned
       ansible.vm.network "public_network"
       #Provisioning
